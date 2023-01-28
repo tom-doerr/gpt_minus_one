@@ -1,0 +1,14 @@
+services:
+  gpt_minus_one:
+    build: .
+    ports:
+      - "5500:5500"
+
+    working_dir: /mounted
+    volumes:
+      - .:/mounted
+
+    command: streamlit run streamlit_app.py --server.port 5500
+    restart: on-failure
+
+
