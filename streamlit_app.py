@@ -3,6 +3,23 @@ import torch
 from transformers import BertTokenizer, BertModel, BertForMaskedLM
 import logging
 logging.basicConfig(level=logging.INFO)# OPTIONAL
+# from PyDictionary import PyDictionary
+from py_thesaurus import Thesaurus
+
+# dictionary = PyDictionary()
+# synonym = dictionary.synonym('mother')
+# print("synonym:", synonym)
+# st.stop()
+
+from itertools import chain
+from nltk.corpus import wordnet
+import nltk
+nltk.download('wordnet')
+
+# synonyms = wordnet.synsets('change')
+# lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
+# lemmas
+
 
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -11,7 +28,7 @@ model.eval()
 # model.to('cuda')  # if you have gpu
 
 
-def predict_masked_sent(text, top_k=5):
+def predict_masked_sent(text, top_k=20):
     # Tokenize input
     text = "[CLS] %s [SEP]"%text
     tokenized_text = tokenizer.tokenize(text)
@@ -52,9 +69,16 @@ def replace_mask_for_word(text, word):
 
 
 st.title("GPTMinusOne")
+st.markdown("### Obfuscate the use of AI")
 
 # input_text = st.text_input("Enter the text")
-input_text = st.text_area("Enter the text")
+input_text = st.text_area("Enter the text", height=200)
+
+if not st.button('Obfuscate'):
+    st.stop()
+
+# if input_text:
+    # st.stop()
 
 new_text = input_text
 
@@ -62,21 +86,55 @@ num_words = len(input_text.split())
 
 status_1 = st.empty()
 status_2 = st.empty()
+status_bar = st.progress(0)
 
 for i in range(num_words):
+    status_bar.progress((i+1)/num_words)
+    status_1.write(f'At word {i}/{num_words}')
     masked_text, original_word = add_mask_ad_index(new_text, i)
     # if "'" in original_word:
         # continue
     print(masked_text)
     pred = predict_masked_sent(masked_text)
     print(pred)
-    if pred[0][0] == original_word:
-        if pred[1][1] > 0.15:
-            new_text = replace_mask_for_word(masked_text, pred[1][0])
-            status_2.write("Replaced %s with %s"%(original_word, pred[1][0]))
-            # status_2.write(f'At word {i}/{num_words}, replaced {original_word} with {pred[1][0]}')
+    # synonyms = dictionary.synonym(original_word)
+    # new_instance = Thesaurus(original_word)
+    # synonyms = new_instance.get_synonym()
 
-    status_1.write(f'At word {i}/{num_words}')
+    # synonyms.extend(new_instance.get_synonym(pos='verb'))
+    # synonyms.extend(new_instance.get_synonym(pos='adj'))
+
+
+    synonyms_raw = wordnet.synsets(original_word)
+    lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms_raw]))
+    synonyms = list(lemmas)
+
+    print("synonyms:", synonyms)
+    # if pred[0][0] == original_word:
+        # if pred[1][1] > 0.2:
+            # new_text = replace_mask_for_word(masked_text, pred[1][0])
+            # status_2.write("Replaced '%s' with '%s'"%(original_word, pred[1][0]))
+            # status_2.write(f'At word {i}/{num_words}, replaced {original_word} with {pred[1][0]}')
+    if not synonyms:
+        continue
+
+    for word, probability in pred:
+        if word == original_word:
+            continue
+        if word in synonyms:
+            if probability > 0.01:
+                # check if word starts with capital letter
+                if not original_word[0].isupper():
+                    new_text = replace_mask_for_word(masked_text, word)
+                    status_2.write("Replaced '%s' with '%s'"%(original_word, word))
+                    break
+
+
+
+
+
+
+    # status_1.write(f'At word {i}/{num_words}')
 
 
 
@@ -89,11 +147,13 @@ for i in range(num_words):
     print("Predictions:", pred)
     print("Masked word:", masked_text)
 
-    st.write("")
+    # st.write("")
 
+status_2.empty()
+status_bar.empty()
 
-st.write("New text:")
+# st.write("New text:")
 
-st.text_area("", new_text, height=200)
-st.write(new_text)
+# st.write(new_text)
+st.text_area("Obfuscated text", new_text, height=400)
 

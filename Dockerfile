@@ -36,3 +36,7 @@ run pip install git+https://github.com/hunkim/streamlit-google-oauth
 
 run pip install torch
 run pip install transformers
+
+run pip install PyDictionary
+run pip install py-thesaurus
+run pip install nltk
