@@ -16,6 +16,8 @@ from nltk.corpus import wordnet
 import nltk
 nltk.download('wordnet')
 
+import datetime
+
 # synonyms = wordnet.synsets('change')
 # lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
 # lemmas
@@ -71,8 +73,16 @@ def replace_mask_for_word(text, word):
 st.title("GPTMinusOne")
 st.markdown("### Obfuscate the use of AI")
 
+LOG_FILE = "log.csv"
+
+# with open(LOG_FILE, "a") as f:
+    # f.write(f'{datetime.datetime.now()}, None\n')
+
 # input_text = st.text_input("Enter the text")
 input_text = st.text_area("Enter the text", height=200)
+
+with open(LOG_FILE, "a") as f:
+    f.write(f'{datetime.datetime.now()}, {input_text[:30]}\n')
 
 if not st.button('Obfuscate'):
     st.stop()
