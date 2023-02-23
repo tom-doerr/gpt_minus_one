@@ -98,7 +98,7 @@ LOG_FILE = "log.csv"
 
 # input_text = st.text_input("Enter the text")
 # input_text = st.text_area("Enter the text", height=200)
-input_text = st.text_area("Enter the text (Max length around 400 words)", height=200)
+input_text = st.text_area("Enter the text (Max length around 200 words)", height=200)
 
 with open(LOG_FILE, "a") as f:
     f.write(f'{datetime.datetime.now()}, {input_text[:30]}\n')
