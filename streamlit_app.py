@@ -17,6 +17,7 @@ import nltk
 nltk.download('wordnet')
 
 import datetime
+import random
 
 # synonyms = wordnet.synsets('change')
 # lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
@@ -69,6 +70,23 @@ def replace_mask_for_word(text, word):
     return " ".join(text)
 
 
+def randomly_doubled_spaces(text):
+    text_list = text.split()
+    text = ''
+    braille_blank = '⠀'
+    space = ' '
+    for i in range(len(text_list)):
+        text += text_list[i]
+        # text += ' '
+        text += space
+        if random.random() < 0.05:
+            # text += ' '
+            text += space
+
+    return text
+
+
+
 
 st.title("GPTMinusOne")
 st.markdown("### Obfuscate the use of AI")
@@ -79,7 +97,8 @@ LOG_FILE = "log.csv"
     # f.write(f'{datetime.datetime.now()}, None\n')
 
 # input_text = st.text_input("Enter the text")
-input_text = st.text_area("Enter the text", height=200)
+# input_text = st.text_area("Enter the text", height=200)
+input_text = st.text_area("Enter the text (Max length around 400 words)", height=200)
 
 with open(LOG_FILE, "a") as f:
     f.write(f'{datetime.datetime.now()}, {input_text[:30]}\n')
@@ -159,6 +178,10 @@ for i in range(num_words):
 
     # st.write("")
 
+new_text = randomly_doubled_spaces(new_text)
+
+
+status_1.empty()
 status_2.empty()
 status_bar.empty()
 
