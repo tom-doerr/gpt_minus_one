@@ -3,7 +3,8 @@ from ubuntu:20.04
 run apt update && apt install -y python3 python3-pip
 
 # git
-run apt install -y git
+#run apt install -y git
+run apt update && apt install -y git
 
 run pip install \
 tqdm \
@@ -21,7 +22,8 @@ run pip install rembg
 run pip install -U protobuf
 
 # install cargo
-run apt install -y curl
+#run apt install -y curl
+run apt update && apt install -y curl
 run curl https://sh.rustup.rs -sSf | sh -s -- -y
 run /root/.cargo/bin/cargo install cargo-watch
 
