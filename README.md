@@ -39,6 +39,15 @@
 
 
 # GPT Minus One
+
+<p align="center">
+    <img src='https://github.com/tom-doerr/bins/raw/3084b52ada8a5869fc4efb8f28b3d3054efff622/gpt_minus_one/Screenshot_20230315_005717.png'>
+    <p align="center">
+        Screenshot
+    </p>
+</p>
+
+
 ## What is it?
 This is a streamlit app that obfuscates the use of ChatGPT.
 
