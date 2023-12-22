@@ -91,6 +91,8 @@ def randomly_doubled_spaces(text):
 st.title("GPTMinusOne")
 st.markdown("### Obfuscate the use of AI")
 
+quality = st.sidebar.slider("Quality", 0, 100, 20)
+
 LOG_FILE = "log.csv"
 
 # with open(LOG_FILE, "a") as f:
@@ -98,7 +100,8 @@ LOG_FILE = "log.csv"
 
 # input_text = st.text_input("Enter the text")
 # input_text = st.text_area("Enter the text", height=200)
-input_text = st.text_area("Enter the text (Max length around 200 words)", height=200)
+# input_text = st.text_area("Enter the text (Max length around 200 words)", height=200)
+input_text = st.text_area("Enter the text", height=200)
 
 with open(LOG_FILE, "a") as f:
     f.write(f'{datetime.datetime.now()}, {input_text[:30]}\n')
@@ -124,7 +127,12 @@ for i in range(num_words):
     # if "'" in original_word:
         # continue
     print(masked_text)
-    pred = predict_masked_sent(masked_text)
+    first_half, second_half = masked_text.split("[MASK]")
+    # num_chars = 20
+    num_chars = quality * 4
+    masked_text_window = first_half[-num_chars:] + "[MASK]" + second_half[:num_chars]
+    print("masked_text_window:", masked_text_window)
+    pred = predict_masked_sent(masked_text_window)
     print(pred)
     # synonyms = dictionary.synonym(original_word)
     # new_instance = Thesaurus(original_word)
@@ -189,4 +197,9 @@ status_bar.empty()
 
 # st.write(new_text)
 st.text_area("Obfuscated text", new_text, height=400)
+
+
+st.write('Feedback?')
+st.markdown('<a href="mailto:tomdoerr96@gmail.com">Contact me!</a>', unsafe_allow_html=True)
+
 
