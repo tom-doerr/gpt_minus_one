@@ -117,6 +117,9 @@ new_text = input_text
 num_words = len(input_text.split())
 
 status_1 = st.empty()
+with st.expander("Show surounding text"):
+    text_old = st.empty()
+    text_new = st.empty()
 status_2 = st.empty()
 status_bar = st.progress(0)
 
@@ -163,6 +166,11 @@ for i in range(num_words):
                 # check if word starts with capital letter
                 if not original_word[0].isupper():
                     new_text = replace_mask_for_word(masked_text, word)
+                    old_text_window = replace_mask_for_word(masked_text_window, original_word)
+                    new_text_window = replace_mask_for_word(masked_text_window, word)
+                    text_old.write(f'Old: "{old_text_window}"')
+                    text_new.write(f'New: "{new_text_window}"')
+
                     status_2.write("Replaced '%s' with '%s'"%(original_word, word))
                     break
 
