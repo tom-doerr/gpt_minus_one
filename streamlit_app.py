@@ -23,6 +23,14 @@ import random
 # lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
 # lemmas
 
+# hide sidebar
+st.set_page_config(
+        # layout="wide",
+        page_title="GPTMinusOne",
+        page_icon="🤖",
+        initial_sidebar_state="collapsed",
+        )
+
 
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -91,7 +99,7 @@ def randomly_doubled_spaces(text):
 st.title("GPTMinusOne")
 st.markdown("### Obfuscate the use of AI")
 
-quality = st.sidebar.slider("Quality", 0, 100, 20)
+context_size = st.sidebar.slider("Context Size", 0, 400, 80)
 
 LOG_FILE = "log.csv"
 
@@ -132,7 +140,7 @@ for i in range(num_words):
     print(masked_text)
     first_half, second_half = masked_text.split("[MASK]")
     # num_chars = 20
-    num_chars = quality * 4
+    num_chars = context_size
     masked_text_window = first_half[-num_chars:] + "[MASK]" + second_half[:num_chars]
     print("masked_text_window:", masked_text_window)
     pred = predict_masked_sent(masked_text_window)
@@ -168,10 +176,13 @@ for i in range(num_words):
                     new_text = replace_mask_for_word(masked_text, word)
                     old_text_window = replace_mask_for_word(masked_text_window, original_word)
                     new_text_window = replace_mask_for_word(masked_text_window, word)
-                    text_old.write(f'Old: "{old_text_window}"')
-                    text_new.write(f'New: "{new_text_window}"')
+                    # text_old.write(f'Old: "{old_text_window}"')
+                    text_old.write(f'Old: "{first_half[-num_chars:]} :red[{original_word}] {second_half[:num_chars]}"')
+                    # text_new.write(f'New: "{new_text_window}"')
+                    text_new.write(f'New: "{first_half[-num_chars:]} :green[{word}] {second_half[:num_chars]}"')
 
-                    status_2.write("Replaced '%s' with '%s'"%(original_word, word))
+                    # status_2.write("Replaced '%s' with '%s'"%(original_word, word))
+                    status_2.write(f'Replaced :red[{original_word}] with :green[{word}]')
                     break
 
 
