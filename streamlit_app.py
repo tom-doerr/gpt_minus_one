@@ -112,9 +112,13 @@ LOG_FILE = "log.csv"
 input_text = st.text_area("Enter the text", height=200)
 
 with open(LOG_FILE, "a") as f:
-    f.write(f'{datetime.datetime.now()}, {input_text[:30]}\n')
+    f.write(f'{datetime.datetime.now()}, {input_text.strip()[:30]}\n')
 
 if not st.button('Obfuscate'):
+    st.stop()
+
+if not input_text:
+    st.warning("Please enter some text")
     st.stop()
 
 # if input_text:
